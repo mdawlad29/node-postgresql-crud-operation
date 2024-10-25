@@ -52,7 +52,7 @@ app.post("/crud_create", async (req, res) => {
 });
 
 // Basic GET endpoint for testing
-app.get("/crud_create", async(req, res) => {
+app.get("/crud_get", async(req, res) => {
     try {
         const result=await client.query('select * from practice.demo ');
         res.status(200).json({
@@ -64,6 +64,20 @@ app.get("/crud_create", async(req, res) => {
         console.log("internal server error",error)
     }
 });
+
+app.get('/crud_get/:id',async(req,res)=>{
+    const {id}=req.params;
+    try {
+        const result=await client.query('select * from practice.demo where id=$1',[id]);
+        res.status(200).json({
+            status:200,
+            message:"data fetched successful.",
+            data:result.rows[0]
+        })
+    } catch (error) {
+        console.log('internal server error',error)
+    }
+})
 
 // Start the server
 app.listen(5000, () => {
