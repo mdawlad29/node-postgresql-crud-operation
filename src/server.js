@@ -79,6 +79,64 @@ app.get('/crud_get/:id',async(req,res)=>{
     }
 })
 
+app.patch("/crud_update/:id", async (req, res) => {
+    const { id } = req.params;
+    const { name, description } = req.body; 
+    try {
+        const checkResult = await client.query('SELECT * FROM practice.demo WHERE id=$1', [id]);
+        if (checkResult.rowCount === 0) {
+            return res.status(404).json({
+                status: 404,
+                message: "Data not found"
+            });
+        }
+
+        const result = await client.query('UPDATE practice.demo SET name=$1, description=$2 WHERE id=$3 RETURNING *', [name, description, id]);
+
+        res.status(200).json({
+            status: 200,
+            message: "Data updated successfully",
+            data: result.rows[0]
+        });
+    } catch (error) {
+        console.log("Internal server error", error);
+        res.status(500).json({
+            status: 500,
+            message: "Internal server error",
+            error: error.message 
+        });
+    }
+});
+
+
+app.delete('/crud_delete/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const checkResult = await client.query('SELECT * FROM practice.demo WHERE id=$1', [id]);
+        if (checkResult.rowCount === 0) {
+            return res.status(404).json({
+                status: 404,
+                message: 'Data not found'
+            });
+        }
+
+        const result = await client.query('DELETE FROM practice.demo WHERE id=$1', [id]);
+
+        res.status(200).json({
+            status: 200,
+            message: 'Data deleted successfully.',
+        });
+    } catch (error) {
+        console.log("Internal server error", error);
+        res.status(500).json({
+            status: 500,
+            message: "Internal server error",
+            error: error.message 
+        });
+    }
+});
+
+
 // Start the server
 app.listen(5000, () => {
     console.log(`Server is running on port 5000`);
