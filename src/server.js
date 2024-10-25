@@ -1,6 +1,7 @@
 import express from "express";
 import pg from 'pg';
-
+import dotenv from "dotenv"
+dotenv.config()
 const { Client } = pg;
 const app = express();
 
@@ -9,12 +10,13 @@ app.use(express.json());
 
 // PostgreSQL client setup
 const client = new Client({
-    user: 'postgres',
+    user:'postgres',
     password: 'awlad',
     host: 'localhost',
-    port: 5432,
+    port: 5432 ,
     database: 'crud_operation',
 });
+
 
 // Connect to PostgreSQL
 const dbConnect = async () => {
